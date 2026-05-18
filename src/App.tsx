@@ -33,6 +33,7 @@ function InteractiveCard({
 }: InteractiveCardProps) {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  const background = useMotionTemplate`radial-gradient(800px circle at ${mouseX}px ${mouseY}px, ${glowColor}, transparent 40%)`;
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: ReactMouseEvent<HTMLDivElement>) => {
@@ -56,9 +57,7 @@ function InteractiveCard({
     >
       <motion.div
         className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 transition duration-500 group-hover:opacity-100"
-        style={{
-          background: useMotionTemplate`radial-gradient(800px circle at ${mouseX}px ${mouseY}px, ${glowColor}, transparent 40%)`
-        }}
+        style={{ background }}
       />
       <div className={`absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r ${topBorderClass} scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left`}></div>
 
