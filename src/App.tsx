@@ -284,6 +284,11 @@ export function CustomCursor() {
   const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
+  const cursorXTransformed = useTransform(cursorX, v => v - 6);
+  const cursorYTransformed = useTransform(cursorY, v => v - 6);
+  const ringXTransformed = useTransform(ringX, v => v - 16);
+  const ringYTransformed = useTransform(ringY, v => v - 16);
+
   useEffect(() => {
     if (window.matchMedia('(pointer: fine)').matches) {
       setIsVisible(true);
@@ -326,8 +331,8 @@ export function CustomCursor() {
       <motion.div
         className="fixed top-0 left-0 w-3 h-3 bg-indigo-400 rounded-full pointer-events-none z-[100] mix-blend-screen shadow-[0_0_10px_rgba(99,102,241,0.8)] hidden md:block"
         style={{
-          x: useTransform(cursorX, v => v - 6),
-          y: useTransform(cursorY, v => v - 6),
+          x: cursorXTransformed,
+          y: cursorYTransformed,
         }}
         animate={{
           scale: isHovering ? 0 : 1,
@@ -337,8 +342,8 @@ export function CustomCursor() {
       <motion.div
         className="fixed top-0 left-0 w-8 h-8 border border-purple-500/50 rounded-full pointer-events-none z-[99] mix-blend-screen flex items-center justify-center bg-purple-500/10 backdrop-blur-[1px] hidden md:block"
         style={{
-          x: useTransform(ringX, v => v - 16),
-          y: useTransform(ringY, v => v - 16),
+          x: ringXTransformed,
+          y: ringYTransformed,
         }}
         animate={{
           scale: isHovering ? 1.5 : 1,
