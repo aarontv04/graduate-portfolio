@@ -1,4 +1,4 @@
-import { motion, AnimatePresence, useScroll, useSpring } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useSpring, useMotionValue, useMotionTemplate, useTransform } from 'motion/react';
 import React, { useState, useRef, useEffect, MouseEvent as ReactMouseEvent } from 'react';
 import {
   Code2,
@@ -31,16 +31,15 @@ function InteractiveCard({
   glowColor = "rgba(99, 102, 241, 0.15)",
   topBorderClass = "from-transparent via-indigo-500/50 to-transparent"
 }: InteractiveCardProps) {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: ReactMouseEvent<HTMLDivElement>) => {
     if (cardRef.current) {
       const rect = cardRef.current.getBoundingClientRect();
-      setMousePos({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      });
+      mouseX.set(e.clientX - rect.left);
+      mouseY.set(e.clientY - rect.top);
     }
   };
 
@@ -55,10 +54,10 @@ function InteractiveCard({
       whileHover={{ y: -2, scale: 1.01 }}
       className={`group relative bg-zinc-900/40 backdrop-blur-sm border border-zinc-800/80 rounded-3xl p-8 md:p-10 transition-all shadow-xl overflow-hidden ${className}`}
     >
-      <div
+      <motion.div
         className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 transition duration-500 group-hover:opacity-100"
         style={{
-          background: `radial-gradient(800px circle at ${mousePos.x}px ${mousePos.y}px, ${glowColor}, transparent 40%)`
+          background: useMotionTemplate`radial-gradient(800px circle at ${mouseX}px ${mouseY}px, ${glowColor}, transparent 40%)`
         }}
       />
       <div className={`absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r ${topBorderClass} scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left`}></div>
@@ -273,7 +272,16 @@ export function TypewriterText({ titles }: { titles: string[] }) {
 }
 
 export function CustomCursor() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const mouseX = useMotionValue(-100);
+  const mouseY = useMotionValue(-100);
+
+  // Smooth springs for the cursor components
+  const cursorX = useSpring(mouseX, { damping: 40, stiffness: 1000, mass: 0.1 });
+  const cursorY = useSpring(mouseY, { damping: 40, stiffness: 1000, mass: 0.1 });
+  
+  const ringX = useSpring(mouseX, { damping: 30, stiffness: 400, mass: 0.5 });
+  const ringY = useSpring(mouseY, { damping: 30, stiffness: 400, mass: 0.5 });
+
   const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -283,7 +291,9 @@ export function CustomCursor() {
     }
 
     const updateMousePosition = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      // Updates Motion values directly, bypassing React state entirely (fixes scroll/cursor lag)
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
     };
 
     const handleMouseOver = (e: MouseEvent) => {
@@ -301,14 +311,14 @@ export function CustomCursor() {
       }
     };
 
-    window.addEventListener('mousemove', updateMousePosition);
-    window.addEventListener('mouseover', handleMouseOver);
+    window.addEventListener('mousemove', updateMousePosition, { passive: true });
+    window.addEventListener('mouseover', handleMouseOver, { passive: true });
 
     return () => {
       window.removeEventListener('mousemove', updateMousePosition);
       window.removeEventListener('mouseover', handleMouseOver);
     };
-  }, []);
+  }, [mouseX, mouseY]);
 
   if (!isVisible) return null;
 
@@ -316,23 +326,25 @@ export function CustomCursor() {
     <>
       <motion.div
         className="fixed top-0 left-0 w-3 h-3 bg-indigo-400 rounded-full pointer-events-none z-[100] mix-blend-screen shadow-[0_0_10px_rgba(99,102,241,0.8)] hidden md:block"
+        style={{
+          x: useTransform(cursorX, v => v - 6),
+          y: useTransform(cursorY, v => v - 6),
+        }}
         animate={{
-          x: mousePosition.x - 6,
-          y: mousePosition.y - 6,
           scale: isHovering ? 0 : 1,
           opacity: isHovering ? 0 : 1
         }}
-        transition={{ type: "spring", stiffness: 1000, damping: 40, mass: 0.1 }}
       />
       <motion.div
         className="fixed top-0 left-0 w-8 h-8 border border-purple-500/50 rounded-full pointer-events-none z-[99] mix-blend-screen flex items-center justify-center bg-purple-500/10 backdrop-blur-[1px] hidden md:block"
+        style={{
+          x: useTransform(ringX, v => v - 16),
+          y: useTransform(ringY, v => v - 16),
+        }}
         animate={{
-          x: mousePosition.x - 16,
-          y: mousePosition.y - 16,
           scale: isHovering ? 1.5 : 1,
           backgroundColor: isHovering ? "rgba(168, 85, 247, 0.2)" : "rgba(168, 85, 247, 0.1)",
         }}
-        transition={{ type: "spring", stiffness: 400, damping: 30, mass: 0.5 }}
       />
     </>
   );
