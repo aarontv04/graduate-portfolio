@@ -1,20 +1,37 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Aaron Tom Varghese — Portfolio
 
-# Run and deploy your AI Studio app
+A personal portfolio website built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS v4**, featuring premium animations powered by **Framer Motion**.
 
-This contains everything you need to run your app locally.
+## ✨ Features
 
-View your app in AI Studio: https://ai.studio/apps/b711ad26-c0bc-4e19-851c-0238e456ce46
+- **Sticky Glassmorphism Navbar** — scroll-aware with animated section links
+- **Typewriter Hero Animation** — rotating role titles with smooth transitions
+- **Custom Interactive Cursor** — glowing dual-ring cursor (desktop only)
+- **Scroll Progress Indicator** — gradient bar that fills as you scroll
+- **Bento Grid Skills Section** — modern asymmetric layout for skills & certs
+- **Expandable Project Cards** — click to reveal detailed project breakdowns
+- **Interactive Mouse-Glow Cards** — radial glow that follows your cursor
+- **Fully Responsive** — optimized for both mobile and desktop
 
-## Run Locally
+## 🛠 Tech Stack
 
-**Prerequisites:**  Node.js
+- React 19 + TypeScript
+- Vite 6
+- Tailwind CSS v4
+- Framer Motion (motion/react)
+- Lucide React Icons
 
+## 🚀 Run Locally
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+**Prerequisites:** Node.js
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 📄 License
+
+MIT
